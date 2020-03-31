@@ -1,10 +1,10 @@
 <div class="single">
 	<div class="row">
 		<div class="col-md-6">
-			<h4><span class="text-muted">Группа </span>112-56</h4>
+			<h4 class="text-center"><span class="text-muted">Группа </span>112-56</h4>
 		</div>
 		<div class="col-md-6">
-			<h4><span class="text-muted">Дата </span>1.04.2020</h4>
+			<h4 class="text-center"><span class="text-muted">Дата </span>1.04.2020</h4>
 		</div>
 	</div>
 	<div class="row">
@@ -14,6 +14,7 @@
 			</div>
 		</div>
 	</div>
+	<!-- table start -->
 	<div class="row">
 		<div class="col-md-10 offset-md-1">
 			<table class="table table-hover">
@@ -72,6 +73,8 @@
 			</table>
 		</div>
 	</div>
+	<!-- table end -->
+	<!-- adding form start -->
 	<div class="row">
 		<div class="col-md-10 offset-md-1">
 			<div class="input-group mb-3">
@@ -82,4 +85,5 @@
 			</div>
 		</div>
 	</div>
+	<!-- adding form end -->
 </div>

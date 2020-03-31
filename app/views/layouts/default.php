@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <base href="<?= PATH; ?>">
+    <base href="/">
 	<title><?= $meta['title']; ?></title>
 	<meta name="description" content="<?= $meta['description']; ?>">
 	<meta name="keywords" content="<?= $meta['keywords']; ?>">
@@ -23,6 +23,7 @@
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
+                <!--------- Меню --------->
                 <!-- <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav">
                         <li class="nav-item active">
@@ -38,7 +39,7 @@
     <div class="main">
         <div class="container">
             <div class="main-content">
-                <?= $content; ?>
+                <?= $content . PHP_EOL; ?>
             </div>
         </div>
     </div>

@@ -8,7 +8,7 @@ use app\controllers\app\AppController;
 
 class LessonController extends AppController
 {
-    public function indexAction()
+    public function viewAction()
     {
         $this->setMeta("Урок", "Урок", "Урок");
     }
