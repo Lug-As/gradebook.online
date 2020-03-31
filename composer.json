@@ -1,0 +1,20 @@
+{
+    "name": "sokol/gradebook",
+    "description": "Online gradebook",
+    "type": "project",
+    "authors": [
+        {
+            "name": "Sokol Artyom",
+            "email": "skaliushartem@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "gradebook\\": "app/core",
+            "app\\": "app"
+        }
+    },
+    "require": {
+        "gabordemooij/redbean": "^5.4"
+    }
+}
