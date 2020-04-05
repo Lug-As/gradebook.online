@@ -45,6 +45,30 @@ if (button_add) {
             });
     };
 }
+let button_add2 = document.querySelector("#button-add2");
+if (button_add2) {
+    button_add2.onclick = function (e) {
+        e.preventDefault();
+        let name = document.querySelector("#name-input").value.trim(),
+            nick = document.querySelector("#nick-input").value.trim(),
+            url = "/lesson/user";
+        document.querySelector("#name-input").value = "";
+        document.querySelector("#nick-input").value = "";
+        fetch(url, {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: "name=" + name + "&nick=" + nick,
+        })
+            .then(response => response.text())
+            .then(result => {
+                if (result.trim() !== "") {
+                    document.querySelector("#main-table").outerHTML = result;
+                }
+            });
+    };
+}
 let radios = document.querySelectorAll(".group-radio-input");
 radios.forEach(function (element) {
     element.onclick = function(){
@@ -95,15 +119,3 @@ if (student_button) {
             });
     };
 }
-// let create = document.querySelector('#create-btn');
-// if (create) {
-//     create.onclick = function (e) {
-//         e.preventDefault();
-//         let st_radios = document.querySelectorAll('.student-radio'),
-//             st_list = [];
-//         st_radios.forEach(function (elem) {
-//             st_list.push(elem.value);
-//         });
-//         console.log()
-//     }
-// }

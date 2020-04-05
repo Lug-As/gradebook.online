@@ -53,5 +53,17 @@
 			</div>
 		</div>
 	</div>
+    <br>
+	<div class="row">
+		<div class="col-md-10 offset-md-1">
+			<div class="input-group mb-3">
+				<input type="text" class="form-control" placeholder="Имя нового ученика..." aria-label="Имя нового ученика..." aria-describedby="button-add2" id="name-input">
+				<input type="text" class="form-control" placeholder="Ник нового ученика..." aria-label="Ник нового ученика..." aria-describedby="button-add2" id="nick-input">
+				<div class="input-group-append">
+					<button class="btn btn-success" id="button-add2">Добавить</button>
+				</div>
+			</div>
+		</div>
+	</div>
 	<!-- adding form end -->
 </div>

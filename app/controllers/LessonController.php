@@ -48,6 +48,43 @@ class LessonController extends AppController
         die;
     }
 
+    public function userAction()
+    {
+        $id = $this->getCheckLessonID();
+        $lesson = R::load('lesson', $id);
+        if ( !$lesson ) {
+            die;
+        }
+        $name = trim($_POST['name']);
+        $nick = trim($_POST['nick']);
+        $group_id = $lesson->group_id;
+        $student = R::dispense('student');
+        $student->name = $name;
+        $student->nick = $nick;
+        $student->group_id = $group_id;
+        $student_id = R::store($student);
+        if ( $student_id === false ){
+            die;
+        }
+        $visit = R::dispense('visit');
+        $visit->student_id = $student_id;
+        $visit->lesson_id = $id;
+        if ( R::store($visit) === false ){
+            die;
+        }
+        $visits = R::find('visit', "`lesson_id` = ?", [$id]);
+        $st_ids = [];
+        foreach ($visits as $visit) {
+            $st_ids[] = $visit->student_id;
+        }
+        if ( R::exec("UPDATE `mark` SET `val` = `val` + 1 WHERE `val` IS NOT NULL AND `student_id` IN (".R::genSlots($st_ids).")", $st_ids) === false){
+            die;
+        }
+        $table = $this->getTable($lesson);
+        echo $table;
+        die;
+    }
+
     public function themeAction()
     {
         $id = $this->getCheckLessonID();
@@ -90,6 +127,7 @@ class LessonController extends AppController
             $marks = R::find('mark', "`theme_id` IN (" . R::genSlots($th_ids) . ")", $th_ids);
         }
         $visits = R::find('visit', "`lesson_id` = ?", [$lesson->id]);
+        $student_ids = [];
         foreach ($visits as $visit) {
             $student_ids[] = $visit->student_id;
         }

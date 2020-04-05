@@ -12,7 +12,7 @@ class MainController extends AppController
 {
 	public function indexAction()
 	{
-	    $lessons = R::findAll('lesson');
+	    $lessons = R::findAll('lesson', "ORDER BY `date` DESC");
         foreach ($lessons as $lesson) {
             $lesson->date = $this->getCurrDate($lesson->date);
 	    }
