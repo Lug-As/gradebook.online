@@ -15,6 +15,7 @@
         }
     },
     "require": {
-        "gabordemooij/redbean": "^5.4"
+        "gabordemooij/redbean": "^5.4",
+        "vlucas/valitron": "^1.4"
     }
 }

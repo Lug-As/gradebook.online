@@ -14,4 +14,11 @@ class AppController extends Controller
         parent::__construct($route);
         new AppModel();
     }
+
+    protected function getCurrDate($date)
+    {
+        $date = strtotime($date);
+        $date = date("d.m.Y", $date);
+        return $date;
+    }
 }

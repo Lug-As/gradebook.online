@@ -41,4 +41,14 @@ abstract class Controller
 		$this->meta['description'] = $desc;
 		$this->meta['keywords'] = $keywords;
 	}
+
+    public function loadView($view, $vars = [])
+    {
+        extract($vars);
+        $file = APP . "/views/{$this->prefix}{$this->controller}/{$view}.php";
+        if ( file_exists($file) ) {
+            require $file;
+        }
+        die;
+	}
 }

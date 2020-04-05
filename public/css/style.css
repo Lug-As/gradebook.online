@@ -12,3 +12,33 @@
 .lesson-header {
 	padding: 50px 0 60px;
 }
+.media-link {
+	color: #343a40;
+}
+.media-link:hover {
+	color: #00007d;
+	text-decoration: none;
+}
+.lesson {
+	margin-top: 10px;
+	border: 1px solid #707579;
+	padding: 10px 20px 0;
+	-webkit-transition: background-color .3s;
+	-moz-transition: background-color .3s;
+	-ms-transition: background-color .3s;
+	-o-transition: background-color .3s;
+	transition: background-color .3s;
+}
+.lesson:hover {
+	background-color: #fbfbfb;
+}
+.list-unstyled {
+	margin: 0;
+}
+.form-control, .form-check-label {
+	font-size: 18px;
+}
+.add-form-header {
+	text-align: center;
+	margin: 10px 0 30px;
+}

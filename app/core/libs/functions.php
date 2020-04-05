@@ -9,15 +9,6 @@ function debug($var, $title = "")
 	echo print_r($var, true) . "</pre>";
 }
 
-function getRlogs(){
-    $logs = \RedBeanPHP\R::getDatabaseAdapter()
-            ->getDatabase()
-            ->getLogger();
-
-    debug( $logs->grep( 'SELECT' ) );
-    return $logs;
-}
-
 function redirect($http = false){
     if ($http) {
         $redirect = $http;
@@ -26,4 +17,21 @@ function redirect($http = false){
     }
     header("Location: {$redirect}");
     die;
+}
+
+function safeHtmlChrs($string){
+    return htmlspecialchars($string, ENT_QUOTES);
+}
+
+function exist($var){
+    return (isset($var) and $var !== "");
+}
+
+function getRlogs(){
+    $logs = \RedBeanPHP\R::getDatabaseAdapter()
+            ->getDatabase()
+            ->getLogger();
+
+    debug( $logs->grep( 'SELECT' ) );
+    return $logs;
 }
