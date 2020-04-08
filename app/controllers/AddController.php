@@ -34,21 +34,19 @@ class AddController extends AppController
                 $_SESSION['errors'][] = "Искомой группы не сущестует";
                 redirect();
             }
-        } else {
-            if ( array_key_exists('new-lesson-group', $data) and is_string($data['new-lesson-group']) and trim($data['new-lesson-group']) !== "" and strlen(trim($data['new-lesson-group'])) < 100){
-                $group_name = trim($data['new-lesson-group']);
-                $group = R::dispense('group');
-                $group->name = $group_name;
-                $group->user_id = 1;
-                $group_id = R::store($group);
-                if( !$group_id ) {
-                    $_SESSION['errors'][] = "Произошла ошибка. Повторите попытку позже";
-                    redirect();
-                }
-            } else {
-                $_SESSION['errors'][] = "Правильно укажите группу для урока";
+        } elseif ( array_key_exists('new-lesson-group', $data) and is_string($data['new-lesson-group']) and trim($data['new-lesson-group']) !== "" and strlen(trim($data['new-lesson-group'])) < 100){
+            $group_name = trim($data['new-lesson-group']);
+            $group = R::dispense('group');
+            $group->name = $group_name;
+            $group->user_id = 1;
+            $group_id = R::store($group);
+            if( !$group_id ) {
+                $_SESSION['errors'][] = "Произошла ошибка. Повторите попытку позже";
                 redirect();
             }
+        } else {
+            $_SESSION['errors'][] = "Правильно укажите группу для урока";
+            redirect();
         }
         $lesson = R::dispense('lesson');
         $lesson->name = trim($data['lesson-name']);

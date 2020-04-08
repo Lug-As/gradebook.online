@@ -19,12 +19,32 @@ function redirect($http = false){
     die;
 }
 
-function safeHtmlChrs($string){
+function safeHtmlChars($string){
     return htmlspecialchars($string, ENT_QUOTES);
 }
 
 function exist($var){
     return (isset($var) and $var !== "");
+}
+
+function getErrors(){
+    if ( array_key_exists('errors', $_SESSION) ): ?>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="alert" role="alert">
+            <?php
+                echo "<ul class='list-group'>";
+                foreach ($_SESSION['errors'] as $item) {
+                    echo "<li class='list-group-item list-group-item-danger'>{$item}</li>";
+                }
+                echo "</ul>";
+            ?>
+            </div>
+        </div>
+    </div>
+    <?php
+    unset($_SESSION['errors']);
+    endif;
 }
 
 function getRlogs(){

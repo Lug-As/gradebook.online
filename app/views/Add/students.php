@@ -8,7 +8,7 @@
                     foreach ($students as $student): ?>
                         <div class="student">
                             <input name="student-<?= $student->id; ?>" class="student-radio" type="checkbox" value="<?= $student->id; ?>" id="student-<?= $student->id; ?>">
-                            <label for="student-<?= $student->id; ?>"><?= $student->name; ?> (<?= $student->nick; ?>)</label>
+                            <label for="student-<?= $student->id; ?>"><?= safeHtmlChars($student->name); ?> (<?= safeHtmlChars($student->nick); ?>)</label>
                         </div>
                     <?php endforeach;
                 else: ?>

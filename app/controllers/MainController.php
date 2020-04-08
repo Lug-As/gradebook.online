@@ -19,4 +19,18 @@ class MainController extends AppController
 	    $this->setData( compact("lessons", "groups") );
 		$this->setMeta(App::$app->getProperty('app_name'), "Онлайн журнал оценок", "Журнал оценок");
 	}
+
+    public function dellessonAction()
+    {
+        if ( !key_exists('lesson', $_POST) or trim($_POST['lesson']) === "" ){
+            die;
+        }
+        $lesson_id = trim($_POST['lesson']);
+        $lesson = R::load('lesson', $lesson_id);
+        if ( !$lesson ){
+            die;
+        }
+        R::trash($lesson);
+        die;
+	}
 }

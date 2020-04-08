@@ -42,3 +42,39 @@
 	text-align: center;
 	margin: 10px 0 30px;
 }
+.student-ico {
+	margin-left: 5px;
+	-webkit-transition: all .2s;
+	-moz-transition: all .2s;
+	-ms-transition: all .2s;
+	-o-transition: all .2s;
+	transition: all .2s;
+}
+.student-ico:hover {
+	cursor: pointer;
+	font-size: 18px;
+	margin-left: 3px;
+}
+.red-ico:hover {
+	color: red;
+}
+.blue-ico:hover {
+	color: blue;
+}
+.lesson {
+	position: relative;
+}
+.del-btn-box {
+	position: absolute;
+	display: inline-block;
+	top: .5em;
+	right: .5em;
+}
+#confirm-btn {
+	padding: 0 2px;
+	font-size: 24px;
+}
+.new-name-input {
+	padding: 4px 8px;
+	font-size: 15px;
+}

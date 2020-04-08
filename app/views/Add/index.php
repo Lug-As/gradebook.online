@@ -1,11 +1,4 @@
-<div class="errors">
-    <?php
-    if ( isset($_SESSION['errors']) ) {
-        debug($_SESSION['errors'], 'errors');
-        unset($_SESSION['errors']);
-    }
-    ?>
-</div>
+<?php getErrors(); ?>
 <div class="row">
     <div class="col-md-8 offset-md-2">
         <div class="add-form">
@@ -27,7 +20,7 @@
                             <select class="form-control group-input" id="old-group" name="lesson-group-id" required>
                                 <option value="">Выберете группу</option>
                                 <?php foreach ($groups as $group): ?>
-                                <option value="<?= $group->id; ?>"><?= $group->name; ?></option>
+                                <option value="<?= $group->id; ?>"><?= safeHtmlChars($group->name); ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>

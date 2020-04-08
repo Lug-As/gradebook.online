@@ -55,6 +55,9 @@ class LessonController extends AppController
         if ( !$lesson ) {
             die;
         }
+        if ( !exist(trim($_POST['name'])) ) {
+            die;
+        }
         $name = trim($_POST['name']);
         $nick = trim($_POST['nick']);
         $group_id = $lesson->group_id;
@@ -103,6 +106,33 @@ class LessonController extends AppController
             $table = $this->getTable($lesson);
             echo $table;
         }
+        die;
+    }
+
+    public function delstudentAction()
+    {
+        $id = $this->getCheckLessonID();
+        $lesson = R::load('lesson', $id);
+        if ( !$lesson ) {
+            die;
+        }
+        if ( !exist(trim($_POST['student'])) ) {
+            die;
+        }
+        $student_id = (int) trim($_POST['student']);
+        $student = R::load('student', $student_id);
+        if ( !$student ){
+            die;
+        }
+        R::trash($student);
+        $visits = R::find('visit', "`lesson_id` = ?", [$id]);
+        $st_ids = [];
+        foreach ($visits as $visit) {
+            $st_ids[] = $visit->student_id;
+        }
+        R::exec("UPDATE `mark` SET `val` = `val` - 1 WHERE `val` IS NOT NULL AND `student_id` IN (".R::genSlots($st_ids).")", $st_ids);
+        $table = $this->getTable($lesson);
+        echo $table;
         die;
     }
 
