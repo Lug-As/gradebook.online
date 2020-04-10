@@ -11,17 +11,15 @@ class UserController extends AppController
 {
     public function signupAction()
     {
-        if ( !empty($_POST) ){
+        if (!empty($_POST)) {
             $user = new User();
             $data = $_POST;
             $user->load($data);
-            if ( !$user->validate($data) ){
-                $user->getErrors();
-
-            }
-            else {
+            if (!$user->validate($data) or !$user->checkUnique()) {
+                $_SESSION['errors'] = $user->errors;
+            } else {
                 $user->attributes['password'] = password_hash($user->attributes['password'], PASSWORD_DEFAULT);
-                if ( $user->save('user') ) {
+                if ($user->save('user')) {
                     $_SESSION['user'] = $user->attributes;
                     redirect(PATH);
                 } else {
@@ -35,12 +33,12 @@ class UserController extends AppController
 
     public function loginAction()
     {
-        
+        $this->setMeta("Вход");
     }
 
     public function logoutAction()
     {
-        if ( !empty($_SESSION['user']) ) {
+        if (key_exists('user', $_SESSION)) {
             unset($_SESSION['user']);
         }
         redirect();

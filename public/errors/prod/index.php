@@ -8,6 +8,7 @@ Author URL: http://w3layouts.com
 	} else {
 		$subheader = "К сожалению, произошла ошибка";
 	}
+	$back = $_SERVER['HTTP_REFERER'] ?? PATH;
 ?>
 <!DOCTYPE html>
 <html lang="ru">
@@ -37,8 +38,8 @@ Author URL: http://w3layouts.com
 						<a href="<?=PATH; ?>" class="btn brk-btn-bg brk-btn">
 							На главную
 						</a>
-						<a href="<?=PATH; ?>" class="btn brk-btn">
-							Связаться с нами
+						<a href="<?=$back; ?>" class="btn brk-btn">
+							На предыдущую
 						</a>
 					</div>
 				</div>

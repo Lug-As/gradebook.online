@@ -2,14 +2,15 @@
 
 function debug($var, $title = "")
 {
-	echo "<pre>";
-	if ( $title != "" ) {
-		echo ucfirst($title) . ": ";
-	}
-	echo print_r($var, true) . "</pre>";
+    echo "<pre>";
+    if ($title != "") {
+        echo ucfirst($title) . ": ";
+    }
+    echo print_r($var, true) . "</pre>";
 }
 
-function redirect($http = false){
+function redirect($http = false)
+{
     if ($http) {
         $redirect = $http;
     } else {
@@ -19,39 +20,50 @@ function redirect($http = false){
     die;
 }
 
-function safeHtmlChars($string){
+function safeHtmlChars($string)
+{
     return htmlspecialchars($string, ENT_QUOTES);
 }
 
-function exist($var){
+function exist($var)
+{
     return (isset($var) and $var !== "");
 }
 
-function getErrors(){
-    if ( array_key_exists('errors', $_SESSION) ): ?>
-    <div class="row">
-        <div class="col-md-12">
-            <div class="alert" role="alert">
-            <?php
-                echo "<ul class='list-group'>";
-                foreach ($_SESSION['errors'] as $item) {
-                    echo "<li class='list-group-item list-group-item-danger'>{$item}</li>";
-                }
-                echo "</ul>";
-            ?>
+function getErrors()
+{
+    if (array_key_exists('errors', $_SESSION)): ?>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="alert" role="alert">
+                    <ul class='list-group'>
+                        <?php getErrorsList($_SESSION['errors']); ?>
+                    </ul>
+                </div>
             </div>
         </div>
-    </div>
-    <?php
-    unset($_SESSION['errors']);
+        <?php
+        unset($_SESSION['errors']);
     endif;
 }
 
-function getRlogs(){
-    $logs = \RedBeanPHP\R::getDatabaseAdapter()
-            ->getDatabase()
-            ->getLogger();
+function getErrorsList($errors)
+{
+    foreach ($errors as $error) {
+        if (is_array($error)) {
+            getErrorsList($error);
+        } else {
+            echo "<li class='list-group-item list-group-item-danger'>{$error}</li>";
+        }
+    }
+}
 
-    debug( $logs->grep( 'SELECT' ) );
+function getRlogs()
+{
+    $logs = \RedBeanPHP\R::getDatabaseAdapter()
+        ->getDatabase()
+        ->getLogger();
+
+    debug($logs->grep('SELECT'));
     return $logs;
 }

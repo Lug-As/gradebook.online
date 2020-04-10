@@ -25,12 +25,11 @@ class MainController extends AppController
         if ( !key_exists('lesson', $_POST) or trim($_POST['lesson']) === "" ){
             die;
         }
-        $lesson_id = trim($_POST['lesson']);
+        $lesson_id = (int) trim($_POST['lesson']);
         $lesson = R::load('lesson', $lesson_id);
-        if ( !$lesson ){
-            die;
+        if ( $lesson ){
+            R::trash($lesson);
         }
-        R::trash($lesson);
         die;
 	}
 }

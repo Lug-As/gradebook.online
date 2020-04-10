@@ -49,15 +49,4 @@ abstract class Model
         }
         return true;
     }
-
-    public function getErrors(){
-        $list = "<ul>";
-        foreach ($this->errors as $error) {
-            foreach ($error as $value) {
-                $list .= "<li>{$value}</li>";
-            }
-        }
-        $list .= "</ul>";
-        $_SESSION['errors'] = $list;
-    }
 }

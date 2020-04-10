@@ -26,10 +26,6 @@ class LessonController extends AppController
     public function markAction()
     {
         $id = $this->getCheckLessonID();
-        $lesson = R::count('lesson', "`id` = ?", [$id]);
-        if ( !$lesson ) {
-            die;
-        }
         $student_id = (int) $_POST['student'];
         $theme_id = (int) $_POST['theme'];
         $check = R::find('mark', "`theme_id` = ? AND `student_id` = ?", [$theme_id, $student_id]);
@@ -48,13 +44,9 @@ class LessonController extends AppController
         die;
     }
 
-    public function userAction()
+    public function studentAction()
     {
-        $id = $this->getCheckLessonID();
-        $lesson = R::load('lesson', $id);
-        if ( !$lesson ) {
-            die;
-        }
+        $lesson = $this->getCheckLessonID(true);
         if ( !exist(trim($_POST['name'])) ) {
             die;
         }
@@ -80,8 +72,8 @@ class LessonController extends AppController
         foreach ($visits as $visit) {
             $st_ids[] = $visit->student_id;
         }
-        if ( R::exec("UPDATE `mark` SET `val` = `val` + 1 WHERE `val` IS NOT NULL AND `student_id` IN (".R::genSlots($st_ids).")", $st_ids) === false){
-            die;
+        if ($st_ids) {
+            R::exec("UPDATE `mark` SET `val` = `val` + 1 WHERE `val` IS NOT NULL AND `student_id` IN (" . R::genSlots($st_ids) . ")", $st_ids);
         }
         $table = $this->getTable($lesson);
         echo $table;
@@ -91,8 +83,8 @@ class LessonController extends AppController
     public function themeAction()
     {
         $id = $this->getCheckLessonID();
-        $name = (string) $_POST['theme'];
-        if ( trim($name) == "" ) {
+        $name = (string) trim($_POST['theme']);
+        if ( $name == "" ) {
             die;
         }
         $theme = R::dispense('theme');
@@ -111,11 +103,7 @@ class LessonController extends AppController
 
     public function delstudentAction()
     {
-        $id = $this->getCheckLessonID();
-        $lesson = R::load('lesson', $id);
-        if ( !$lesson ) {
-            die;
-        }
+        $lesson = $this->getCheckLessonID(true);
         if ( !exist(trim($_POST['student'])) ) {
             die;
         }
@@ -130,23 +118,44 @@ class LessonController extends AppController
         foreach ($visits as $visit) {
             $st_ids[] = $visit->student_id;
         }
-        R::exec("UPDATE `mark` SET `val` = `val` - 1 WHERE `val` IS NOT NULL AND `student_id` IN (".R::genSlots($st_ids).")", $st_ids);
+        if ($st_ids) {
+            R::exec("UPDATE `mark` SET `val` = `val` - 1 WHERE `val` IS NOT NULL AND `student_id` IN (" . R::genSlots($st_ids) . ")", $st_ids);
+        }
         $table = $this->getTable($lesson);
         echo $table;
         die;
     }
 
-    public function getCheckLessonID()
+    public function editstudentAction()
     {
-        $referer = $this->getClearReferer();
-        if( !preg_match("#^".PATH."/lesson/(?P<id>[0-9]+)$#", $referer, $matches) ) {
+        $id = $this->getCheckLessonID();
+        $type = (string) trim($_POST['type']);
+        if ( $type !== "name" and $type !== "nick" ){
             die;
         }
-        $id = (int) $matches['id'];
-        return $id;
+        $value = (string) trim($_POST['value']);
+        if ( $value == "" or strlen($value) > 200 ){
+            die;
+        }
+        $student_id = (int) trim($_POST['student']);
+        $student = R::load('student', $student_id);
+        if ( !$student ){
+            die;
+        }
+        $visit = R::find('visit', '`student_id` = ? AND `lesson_id` = ?', [$student_id, $id]);
+        if ( !$visit ){
+            die;
+        }
+        if ( !key_exists($type, $student->getProperties()) or $student->$type == $value ){
+            die;
+        }
+        $student->$type = $value;
+        R::store($student);
+        echo $value;
+        die;
     }
 
-    public function getTable($lesson)
+    protected function getTable($lesson)
     {
         $themes = R::find('theme', "`lesson_id` = ?", [$lesson->id]);
         $th_ids = [];
@@ -166,6 +175,32 @@ class LessonController extends AppController
         require APP . "/views/Lesson/table.php";
         $table = ob_get_clean();
         return $table;
+    }
+
+    protected function getCheckLessonID($lessonReturn = false)
+    {
+        $referer = $this->getClearReferer();
+        if( !preg_match("#^".PATH."/lesson/(?P<id>[0-9]+)$#", $referer, $matches) ) {
+            die;
+        }
+        $id = (int) $matches['id'];
+        $out = $this->checkLesson($id, $lessonReturn);
+        return $out;
+    }
+
+    protected function checkLesson($id, $lessonReturn = false)
+    {
+        if (!$lessonReturn) {
+            $lesson = R::count('lesson', "`id` = ?", [$id]);
+            $out = $id;
+        } else {
+            $lesson = R::load('lesson', $id);
+            $out = $lesson;
+        }
+        if ( !$lesson ) {
+            die;
+        }
+        return $out;
     }
 
     protected function getClearReferer()
