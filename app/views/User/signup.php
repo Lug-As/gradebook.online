@@ -13,7 +13,7 @@
                 <div class="form-group">
                     <label for="login-signup-input">Ваш логин</label>
                     <input id="login-signup-input" name="login" class="form-control signup-input" type="text"
-                           placeholder="Iron Man" required maxlength="100">
+                           placeholder="IronMan1965" required maxlength="100">
                 </div>
                 <div class="form-group">
                     <label for="email-signup-input">Ваш email</label>

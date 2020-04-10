@@ -54,4 +54,29 @@ class User extends AppModel
         }
         return true;
     }
+
+    public function login($data)
+    {
+        if ( !key_exists('login', $data) or trim($data['login']) === ""){
+            $this->errors['login'][] = "Введите логин";
+            return false;
+        }
+        if ( !key_exists('password', $data) or trim($data['password']) === ""){
+            $this->errors['password'][] = "Введите пароль";
+            return false;
+        }
+        $login = trim($data['login']);
+        $password = $data['password'];
+        $user = R::findOne('user', "`login` = ?", [$login]);
+        if (!$user){
+            $this->errors['login'][] = "Такого логина не существует";
+            return false;
+        }
+        if ( !password_verify($password, $user->password) ){
+            $this->errors['password'][] = "Неверный пароль";
+            return false;
+        }
+        $_SESSION['user'] = $user;
+        return true;
+    }
 }

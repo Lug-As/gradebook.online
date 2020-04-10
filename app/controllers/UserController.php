@@ -33,7 +33,18 @@ class UserController extends AppController
 
     public function loginAction()
     {
-        $this->setMeta("Вход");
+        if (!empty($_POST)){
+            $user = new User();
+            $data = $_POST;
+            if ( $user->login($data) ){
+                redirect(PATH);
+            }
+            else {
+                $_SESSION['errors'][] = $user->errors;
+                redirect();
+            }
+        }
+        $this->setMeta("Вход в аккаунт");
     }
 
     public function logoutAction()
