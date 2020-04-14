@@ -22,7 +22,7 @@ abstract class Model
     public function load(array $data)
     {
         foreach ($data as $key => $value) {
-            if ( array_key_exists($key, $this->attributes) ){
+            if (key_exists($key, $this->attributes)) {
                 $this->attributes[$key] = $value;
             }
         }
@@ -41,9 +41,9 @@ abstract class Model
     {
         Validator::langDir(WWW . "/valitron/lang");
         Validator::lang('ru');
-        $v =  new Validator($data);
+        $v = new Validator($data);
         $v->rules($this->rules);
-        if( !$v->validate() ){
+        if (!$v->validate()) {
             $this->errors = $v->errors();
             return false;
         }

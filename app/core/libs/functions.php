@@ -25,6 +25,29 @@ function safeHtmlChars($string)
     return htmlspecialchars($string, ENT_QUOTES);
 }
 
+function generate_hash($length = '32')
+{
+    $symbol = "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890@$&.";
+    $code = "";
+    for ($i = 0; $i < $length; $i++) {
+        $code .= $symbol[rand(0, strlen($symbol) - 1)];
+    }
+    return $code;
+}
+
+function checkUserHash($id, $hash)
+{
+    if ($hash) {
+        $user = \RedBeanPHP\R::load('user', $id);
+        if ($user) {
+            if ($user->hash === $hash){
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
 function exist($var)
 {
     return (isset($var) and $var !== "");
@@ -32,7 +55,7 @@ function exist($var)
 
 function getErrors()
 {
-    if (array_key_exists('errors', $_SESSION)): ?>
+    if (key_exists('errors', $_SESSION)): ?>
         <div class="row">
             <div class="col-md-12">
                 <div class="alert" role="alert">

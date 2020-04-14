@@ -17,7 +17,7 @@ class DB
         if ( !R::testConnection() ){
             throw new \Exception("Ошибка подключения к базе данных. DSN: {$config['dsn']}, user: {$config['user']}, pass: {$config['password']}",  500);
         }
-        R::freeze(!DEBUG);
+        R::freeze(1);
         R::debug(DEBUG, 1);
     }
 }

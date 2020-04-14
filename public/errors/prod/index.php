@@ -5,7 +5,9 @@ Author URL: http://w3layouts.com
 <?php
 	if ($response == 404) {
 		$subheader = "Такой страницы не существует";
-	} else {
+	} elseif ($response == 403){
+	    $subheader = "Запрашиваемый урок принадлежит не вам";
+    } else {
 		$subheader = "К сожалению, произошла ошибка";
 	}
 	$back = $_SERVER['HTTP_REFERER'] ?? PATH;
@@ -14,13 +16,9 @@ Author URL: http://w3layouts.com
 <html lang="ru">
 
 <head>
-    <title>Pug Error Page</title>
-    <!-- Meta tag Keywords -->
+    <title><?= $subheader; ?></title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta charset="UTF-8" />
-    <meta name="keywords"
-        content="Pug Error Page Responsive web template, Bootstrap Web Templates, Flat Web Templates, Android Compatible web template, Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, SonyEricsson, Motorola web design" />
-    <!-- //Meta tag Keywords -->
     <link rel="stylesheet" href="/errors/prod/css/style.css" type="text/css" media="all" /><!-- Style-CSS -->
 </head>
 
@@ -31,16 +29,13 @@ Author URL: http://w3layouts.com
 			<div class="wrapper-full">
 				<div class="main-content">
 					<h2>Извините</h2>
-					<h4><?=$subheader; ?></h4>
-					<p>Вы можете вернуться на главную страницу либо связаться с нашей службой поддержки.</p>
+					<h4><?= $subheader; ?></h4>
+                    <p>Вы можете вернуться на главную страницу либо на предыдущую</p>
+                    <p>Код ошибки <strong><?=$response?></strong></p>
 					<!-- buttons -->
 					<div class="buttons">
-						<a href="<?=PATH; ?>" class="btn brk-btn-bg brk-btn">
-							На главную
-						</a>
-						<a href="<?=$back; ?>" class="btn brk-btn">
-							На предыдущую
-						</a>
+						<a href="<?=PATH; ?>" class="btn brk-btn-bg brk-btn">На главную</a>
+						<a href="<?=$back; ?>" class="btn brk-btn">На предыдущую</a>
 					</div>
 				</div>
 				<div class="bottom-header">

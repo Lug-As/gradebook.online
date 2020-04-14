@@ -5,40 +5,52 @@ namespace app\controllers;
 
 
 use app\controllers\app\AppController;
+use app\models\Student;
+use gradebook\App;
 use RedBeanPHP\R;
 
 class LessonController extends AppController
 {
     public function viewAction()
     {
-        $id = $this->route['id'];
-        $lesson = R::load('lesson', $id);
+        $lesson_id = $this->route['id'];
+        $user_id = App::$app->getProperty('user_id');
+        $lesson = R::findOne('lesson', "`id` = ?", [$lesson_id]);
         if (!$lesson) {
             throw new \Exception("Урок не найден", 404);
+        }
+        if ($lesson->user_id != $user_id) {
+            throw new \Exception("Запрашиваемый урок принадлежит не вам", 403);
         }
         $lesson->date = $this->getCurrDate($lesson->date);
         $group = R::load('group', $lesson->group_id);
         $table = $this->getTable($lesson);
-        $this->setData( compact("lesson", "group", "table") );
+        $this->setData(compact("lesson", "group", "table"));
         $this->setMeta($lesson->name, "Урок", "Урок");
     }
 
     public function markAction()
     {
-        $id = $this->getCheckLessonID();
-        $student_id = (int) $_POST['student'];
-        $theme_id = (int) $_POST['theme'];
-        $check = R::find('mark', "`theme_id` = ? AND `student_id` = ?", [$theme_id, $student_id]);
-        if ($check) {
+        if (!key_exists('student', $_POST) or !key_exists('theme', $_POST) or trim($_POST['student']) === "" or trim($_POST['theme']) === "") {
             die;
         }
-        $total_count = R::count('visit', "`lesson_id` = ?", [$id]);
+        $user_id = App::$app->getProperty('user_id');
+        $lesson_id = $this->getLessonOrID($user_id);
+        $student_id = (int)trim($_POST['student']);
+        $theme_id = (int)trim($_POST['theme']);
+        $theme = R::count('theme', "`id` = ? AND `lesson_id` = ?", [$theme_id, $lesson_id]);
+        $visit = R::count('visit', "`student_id` = ? AND `lesson_id` = ?", [$student_id, $lesson_id]);
+        $check = R::count('mark', "`theme_id` = ? AND `student_id` = ?", [$theme_id, $student_id]);
+        if ($check or !$visit or !$theme) {
+            die;
+        }
+        $total_count = R::count('visit', "`lesson_id` = ?", [$lesson_id]);
         $real_count = R::count('mark', "`theme_id` = ?", [$theme_id]);
         $mark = R::dispense('mark');
         $mark->val = $total_count - $real_count;
         $mark->student_id = $student_id;
         $mark->theme_id = $theme_id;
-        if ( R::store($mark) !== false ) {
+        if (R::store($mark)) {
             echo $mark->val;
         }
         die;
@@ -46,28 +58,33 @@ class LessonController extends AppController
 
     public function studentAction()
     {
-        $lesson = $this->getCheckLessonID(true);
-        if ( !exist(trim($_POST['name'])) ) {
+        if (!key_exists('name', $_POST) or !key_exists('nick', $_POST) or trim($_POST['name']) === "" or trim($_POST['nick']) === "") {
             die;
         }
-        $name = trim($_POST['name']);
-        $nick = trim($_POST['nick']);
+        $user_id = App::$app->getProperty('user_id');
+        $lesson = $this->getLessonOrID($user_id, true);
         $group_id = $lesson->group_id;
-        $student = R::dispense('student');
-        $student->name = $name;
-        $student->nick = $nick;
-        $student->group_id = $group_id;
-        $student_id = R::store($student);
-        if ( $student_id === false ){
+        $data = [
+            'name' => trim($_POST['name']),
+            'nick' => trim($_POST['nick']),
+            'group_id' => $group_id,
+        ];
+        $student = new Student();
+        $student->load($data);
+        if (!$student->validate($data)) {
+            die;
+        }
+        $student_id = $student->save('student');
+        if (!$student_id) {
             die;
         }
         $visit = R::dispense('visit');
         $visit->student_id = $student_id;
-        $visit->lesson_id = $id;
-        if ( R::store($visit) === false ){
+        $visit->lesson_id = $lesson->id;
+        if (!R::store($visit)) {
             die;
         }
-        $visits = R::find('visit', "`lesson_id` = ?", [$id]);
+        $visits = R::find('visit', "`lesson_id` = ?", [$lesson->id]);
         $st_ids = [];
         foreach ($visits as $visit) {
             $st_ids[] = $visit->student_id;
@@ -82,19 +99,19 @@ class LessonController extends AppController
 
     public function themeAction()
     {
-        $id = $this->getCheckLessonID();
-        $name = (string) trim($_POST['theme']);
-        if ( $name == "" ) {
+        if (!key_exists('theme', $_POST) or trim($_POST['theme']) == ""){
             die;
         }
+        $user_id = App::$app->getProperty('user_id');
+        $lesson = $this->getLessonOrID($user_id, true);
+        $name = (string)trim($_POST['theme']);
         $theme = R::dispense('theme');
         $theme->name = $name;
-        $theme->lesson_id = $id;
-        if ( R::store($theme) === false ) {
+        $theme->lesson_id = $lesson->id;
+        if (!R::store($theme)) {
             die;
         }
-        $lesson = R::load('lesson', $id);
-        if ( $lesson ){
+        if ($lesson) {
             $table = $this->getTable($lesson);
             echo $table;
         }
@@ -103,17 +120,19 @@ class LessonController extends AppController
 
     public function delstudentAction()
     {
-        $lesson = $this->getCheckLessonID(true);
-        if ( !exist(trim($_POST['student'])) ) {
+        if (!key_exists('student', $_POST) or trim($_POST['student']) == "") {
             die;
         }
-        $student_id = (int) trim($_POST['student']);
-        $student = R::load('student', $student_id);
-        if ( !$student ){
+        $user_id = App::$app->getProperty('user_id');
+        $lesson = $this->getLessonOrID($user_id, true);
+        $student_id = (int)trim($_POST['student']);
+        $student = R::findOne('student', "`id` = ?", [$student_id]);
+        $visit = R::count('visit', '`student_id` = ? AND `lesson_id` = ?', [$student_id, $lesson->id]);
+        if (!$student or !$visit) {
             die;
         }
         R::trash($student);
-        $visits = R::find('visit', "`lesson_id` = ?", [$id]);
+        $visits = R::find('visit', "`lesson_id` = ?", [$lesson->id]);
         $st_ids = [];
         foreach ($visits as $visit) {
             $st_ids[] = $visit->student_id;
@@ -128,25 +147,29 @@ class LessonController extends AppController
 
     public function editstudentAction()
     {
-        $id = $this->getCheckLessonID();
-        $type = (string) trim($_POST['type']);
-        if ( $type !== "name" and $type !== "nick" ){
+        if (!key_exists('type', $_POST) or !key_exists('value', $_POST) or !key_exists('student', $_POST)) {
             die;
         }
-        $value = (string) trim($_POST['value']);
-        if ( $value == "" or strlen($value) > 200 ){
+        $user_id = App::$app->getProperty('user_id');
+        $lesson_id = $this->getLessonOrID($user_id);
+        $type = (string)trim($_POST['type']);
+        if ($type !== "name" and $type !== "nick") {
             die;
         }
-        $student_id = (int) trim($_POST['student']);
-        $student = R::load('student', $student_id);
-        if ( !$student ){
+        $value = (string)trim($_POST['value']);
+        if ($value === "" or strlen($value) > 200) {
             die;
         }
-        $visit = R::find('visit', '`student_id` = ? AND `lesson_id` = ?', [$student_id, $id]);
-        if ( !$visit ){
+        $student_id = (int)trim($_POST['student']);
+        $student = R::findOne('student', "`id` = ?", [$student_id]);
+        if (!$student) {
             die;
         }
-        if ( !key_exists($type, $student->getProperties()) or $student->$type == $value ){
+        $visit = R::count('visit', '`student_id` = ? AND `lesson_id` = ?', [$student_id, $lesson_id]);
+        if (!$visit) {
+            die;
+        }
+        if (!key_exists($type, $student->getProperties()) or $student->$type == $value) {
             die;
         }
         $student->$type = $value;
@@ -162,7 +185,7 @@ class LessonController extends AppController
         foreach ($themes as $theme) {
             $th_ids[] = $theme->id;
         }
-        if ( $th_ids ) {
+        if ($th_ids) {
             $marks = R::find('mark', "`theme_id` IN (" . R::genSlots($th_ids) . ")", $th_ids);
         }
         $visits = R::find('visit', "`lesson_id` = ?", [$lesson->id]);
@@ -177,27 +200,27 @@ class LessonController extends AppController
         return $table;
     }
 
-    protected function getCheckLessonID($lessonReturn = false)
+    protected function getLessonOrID($user_id, $lessonReturn = false)
     {
         $referer = $this->getClearReferer();
-        if( !preg_match("#^".PATH."/lesson/(?P<id>[0-9]+)$#", $referer, $matches) ) {
+        if (!preg_match("#^" . PATH . "/lesson/(?P<id>[0-9]+)$#", $referer, $matches)) {
             die;
         }
-        $id = (int) $matches['id'];
-        $out = $this->checkLesson($id, $lessonReturn);
+        $lesson_id = (int)$matches['id'];
+        $out = $this->checkLesson($lesson_id, $user_id, $lessonReturn);
         return $out;
     }
 
-    protected function checkLesson($id, $lessonReturn = false)
+    protected function checkLesson($lesson_id, $user_id, $lessonReturn = false)
     {
         if (!$lessonReturn) {
-            $lesson = R::count('lesson', "`id` = ?", [$id]);
-            $out = $id;
+            $lesson = R::count('lesson', "`id` = ? AND `user_id` = ?", [$lesson_id, $user_id]);
+            $out = $lesson_id;
         } else {
-            $lesson = R::load('lesson', $id);
+            $lesson = R::findOne('lesson', "`id` = ? AND `user_id` = ?", [$lesson_id, $user_id]);
             $out = $lesson;
         }
-        if ( !$lesson ) {
+        if (!$lesson) {
             die;
         }
         return $out;

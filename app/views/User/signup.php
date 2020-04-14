@@ -1,6 +1,7 @@
 <div class="signup">
     <div class="row">
         <div class="col-md-6 offset-md-3">
+            <p class="lead text-center">Для начала необходимо <a href="user/login">войти</a> или <a href="user/signup">зарегистрироваться</a> на нашем сервисе</p>
             <?php getErrors(); ?>
             <h2 class="text-center">Регистрация</h2>
             <br>

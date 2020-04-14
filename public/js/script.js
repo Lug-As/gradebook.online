@@ -5,7 +5,7 @@ function insertTable(tableArray, tableTitle) {
         '<tr><th scope="col">Ученик</th><th scope="col">Ник</th><th scope="col">Баллы</th></tr>' +
         '</thead>' +
         '<tbody>';
-    tableArray.forEach(function(element){
+    tableArray.forEach(function (element) {
         table += '<tr> ';
         element.forEach(function (elem) {
             table += '<td> ';
@@ -21,6 +21,7 @@ function insertTable(tableArray, tableTitle) {
     tablePosition.innerHTML = table;
     titlePosition.innerHTML = tableTitle;
 }
+
 $('body').on('click', '.plus-btn', function (e) {
     let student = $(this).data('student'),
         theme = $(this).data('theme'),
@@ -30,17 +31,17 @@ $('body').on('click', '.plus-btn', function (e) {
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
         },
-        body: "student="+student+"&theme="+theme
+        body: "student=" + student + "&theme=" + theme
     })
         .then(response => response.text())
         .then(result => {
-            if ( result.trim() !== "" ) {
+            if (result.trim() !== "") {
                 this.outerText = result;
             }
         });
 });
 let add_input = document.querySelector("#add-input");
-if(add_input) {
+if (add_input) {
     add_input.onkeyup = function (e) {
         let empty = this.value.trim() === "";
         document.querySelector("#button-add").disabled = empty;
@@ -66,7 +67,6 @@ if (button_add) {
                 if (result.trim() !== "") {
                     document.querySelector("#main-table").outerHTML = result;
                 }
-
             });
     };
 }
@@ -96,7 +96,7 @@ if (button_add2) {
 }
 let radios = document.querySelectorAll(".group-radio-input");
 radios.forEach(function (element) {
-    element.onclick = function(){
+    element.onclick = function () {
         let id = "#" + this.dataset.show;
         document.querySelectorAll(".group-input").forEach(function (elem) {
             elem.disabled = true;
@@ -124,24 +124,15 @@ if (student_button) {
         })
             .then(response => response.text())
             .then(result => {
-                if (result.trim() !== "") {
-                    let list = document.querySelector(".student-list");
-                    list.insertAdjacentHTML('beforeend', result);
-                    let no_students = document.querySelector(".no-students");
-                    if (no_students) {
-                        no_students.outerText = "";
-                    }
-                }
                 location.reload();
             });
     };
 }
 $('body').on('click', '#main-table tbody tr .trash-ico', function (e) {
     e.preventDefault();
-    let student, url, row;
+    let student, url;
     student = this.dataset.student;
     url = "/lesson/delstudent";
-    row = this.parentElement.parentElement;
     fetch(url, {
         method: "POST",
         headers: {
@@ -151,7 +142,9 @@ $('body').on('click', '#main-table tbody tr .trash-ico', function (e) {
     })
         .then(response => response.text())
         .then(result => {
-            row.remove();
+            if (result.trim() !== "") {
+                document.querySelector("#main-table").outerHTML = result;
+            }
         });
 });
 $('body').on('click', '#main-table tbody tr .edit-ico', function (e) {
@@ -176,7 +169,7 @@ $('body').on('mousedown', '#confirm-btn', function (e) {
     e.preventDefault();
     let new_value;
     new_value = document.getElementById('new-name-input').value.trim();
-    if ( new_value === "" ) return false;
+    if (new_value === "") return false;
     let student, type, url;
     student = this.dataset.student.trim();
     type = this.dataset.tdType.trim();
@@ -189,7 +182,7 @@ $('body').on('mousedown', '#confirm-btn', function (e) {
         body: `student=${student}&type=${type}&value=${new_value}`,
     }).then(response => response.text())
         .then(result => {
-            if ( result.trim() !== "" ){
+            if (result.trim() !== "") {
                 this.parentElement.parentElement.parentElement.childNodes[0].textContent = result.trim();
                 document.querySelector('#new-name-input').blur();
             }
@@ -200,7 +193,7 @@ $("body").on('click', '.lesson-list .lesson .del-btn', function (e) {
     let svg = this.firstElementChild,
         lesson = svg.dataset.lesson,
         url = "/main/dellesson",
-        parentElement = this.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement;
+        parentElement = this.parentElement.parentElement.parentElement.parentElement.parentElement;
     fetch(url, {
         method: "POST",
         headers: {
@@ -214,7 +207,7 @@ $("body").on('click', '.lesson-list .lesson .del-btn', function (e) {
         });
 });
 let qty = document.getElementById('counting-btn');
-if (qty){
+if (qty) {
     qty.onclick = function (e) {
         e.preventDefault();
         let rows, marks;
@@ -227,9 +220,9 @@ if (qty){
             row = [];
             notFound = true;
             length = cells.length;
-            for (let i = 0; i < length; i++){
+            for (let i = 0; i < length; i++) {
                 let item = cells.item(i);
-                if (i === 0 || i === 1){
+                if (i === 0 || i === 1) {
                     row.push(item.firstChild.textContent);
                     continue;
                 }
@@ -242,7 +235,7 @@ if (qty){
             if (length === 2 || notFound) {
                 rowValues.push(0);
             }
-            let sum = rowValues.reduce(function(a, b) {
+            let sum = rowValues.reduce(function (a, b) {
                 return a + b;
             });
             row.push(sum);
@@ -262,7 +255,7 @@ if (task) {
             let cells, row;
             cells = element.children;
             row = [];
-            for (let i = 0; i < 2; i++){
+            for (let i = 0; i < 2; i++) {
                 row.push(cells.item(i).firstChild.textContent);
             }
             row.push('<button class="btn btn-success fast-task-btn">+</button>')
@@ -270,7 +263,7 @@ if (task) {
         });
         insertTable(students, 'Быстрое задание');
         let fastTaskBtns = document.querySelectorAll('.fast-task-btn');
-        if (fastTaskBtns){
+        if (fastTaskBtns) {
             fastTaskBtns.forEach(function (btn) {
                 btn.onclick = function (e) {
                     e.preventDefault();

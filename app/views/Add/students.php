@@ -5,7 +5,7 @@
         <br>
         <input type="checkbox" id="select-all">
         <label for="select-all"><h5>Выбрать всех</h5></label>
-        <form action="add/visits" method="post">
+        <form action="add/visits" method="POST">
             <div class="student-list">
                 <?php if ($students): ?>
                     <?php foreach ($students as $student): ?>
