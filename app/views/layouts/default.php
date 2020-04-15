@@ -12,9 +12,9 @@ if (!key_exists('user', $_SESSION) or empty($_SESSION['user'])) {
 <head>
     <meta charset="UTF-8">
     <base href="/">
-    <title><?= $meta['title']; ?></title>
-    <meta name="description" content="<?= $meta['description']; ?>">
-    <meta name="keywords" content="<?= $meta['keywords']; ?>">
+    <title><?= safeHtmlChars($meta['title']); ?></title>
+    <meta name="description" content="<?= safeHtmlChars($meta['description']); ?>">
+    <meta name="keywords" content="<?= safeHtmlChars($meta['keywords']); ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
