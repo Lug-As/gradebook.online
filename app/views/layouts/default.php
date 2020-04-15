@@ -3,7 +3,7 @@ if (!key_exists('user', $_SESSION) or empty($_SESSION['user'])) {
     $dropdownLink = "Войти в аккаунт";
     $entered = false;
 } else {
-    $dropdownLink = "Добро пожаловать, " . safeHtmlChars($_SESSION['user']['name']) . "!";
+    $dropdownLink = "Добро пожаловать, " . ucfirst(safeHtmlChars($_SESSION['user']['name'])) . "!";
     $entered = true;
 }
 ?>
@@ -34,24 +34,10 @@ if (!key_exists('user', $_SESSION) or empty($_SESSION['user'])) {
                     aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-
-            <!--                <div class="btn-group">-->
-            <!--                    <a class="dropdown-toggle" data-toggle="dropdown">Account <span class="caret"></span></a>-->
-            <!--                    <ul class="dropdown-menu">-->
-            <!--                       --><?php //if(!empty($_SESSION['user'])): ?>
-            <!--                          <li><a href="#">Добро пожаловать, -->
-            <? //=htmlspecialchars($_SESSION['user']['name']);?><!--</a></li>-->
-            <!--                          <li><a href="--><? //= PATH; ?><!--/user/logout">Выход</a></li>-->
-            <!--                       --><?php //else: ?>
-            <!--                          <li><a href="--><? //= PATH; ?><!--/user/login">Вход</a></li>-->
-            <!--                          <li><a href="--><? //= PATH; ?><!--/user/signup">Регистрация</a></li>-->
-            <!--                       --><?php //endif; ?>
-            <!--                    </ul>-->
-            <!--                 </div>-->
             <!--------- Меню --------->
-            <div class="collapse navbar-collapse" id="navbarNav">
+            <div class="collapse navbar-collapse navbar-right" id="navbarNav">
                 <ul class="navbar-nav">
-                    <li class="nav-item dropdown">
+                    <li class="nav-item dropdown text-right">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
                            data-toggle="dropdown" aria-haspopup="true"
                            aria-expanded="false"><?= $dropdownLink; ?></a>

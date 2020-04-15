@@ -13,18 +13,13 @@ class User extends AppModel
     public $attributes = [
         'name' => '',
         'login' => '',
-        'email' => '',
         'password' => '',
     ];
     public $rules = [
         'required' => [
             ['name'],
             ['login'],
-            ['email'],
             ['password'],
-        ],
-        'email' => [
-            ['email'],
         ],
         'lengthBetween' => [
             ['password', 6, 50],
@@ -32,7 +27,6 @@ class User extends AppModel
         'lengthMax' => [
             ['login', 100],
             ['name', 100],
-            ['email', 100],
         ]
     ];
 
@@ -66,17 +60,13 @@ class User extends AppModel
 
     public function checkUnique()
     {
-        $users = R::find('user', "`login` = ? OR `email` = ?", [
+        $users = R::find('user', "`login` = ?", [
             $this->attributes['login'],
-            $this->attributes['email'],
         ]);
         if ($users) {
             foreach ($users as $user) {
                 if ($this->attributes['login'] == $user->login) {
                     $this->errors['unique'][] = "Такой логин уже занят";
-                }
-                if ($this->attributes['email'] == $user->email) {
-                    $this->errors['unique'][] = "Такой email уже занят";
                 }
             }
             return false;

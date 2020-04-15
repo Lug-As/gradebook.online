@@ -1,80 +1,110 @@
-
 /*  Main-color: #343a40  */
 
 .header-box {
-	padding: 40px 0;
+    padding: 40px 0;
 }
+
 .main-content {
-	margin-bottom: 100px;
-	padding: 40px 16px 80px;
-	border: 1px solid #343a40;
+    margin-bottom: 100px;
+    padding: 40px 16px 40px;
+    border: 1px solid #343a40;
 }
+
 .lesson-header {
-	padding: 50px 0 60px;
+    padding: 50px 0 60px;
 }
+
 .media-link {
-	color: #343a40;
+    color: #343a40;
 }
+
 .media-link:hover {
-	color: #00007d;
-	text-decoration: none;
+    color: #00007d;
+    text-decoration: none;
 }
+
 .lesson {
-	margin-top: 10px;
-	border: 1px solid #707579;
-	padding: 10px 20px 0;
-	-webkit-transition: background-color .3s;
-	-moz-transition: background-color .3s;
-	-ms-transition: background-color .3s;
-	-o-transition: background-color .3s;
-	transition: background-color .3s;
+    margin-top: 10px;
+    border: 1px solid #707579;
+    padding: 10px 20px 0;
+    -webkit-transition: background-color .3s;
+    -moz-transition: background-color .3s;
+    -ms-transition: background-color .3s;
+    -o-transition: background-color .3s;
+    transition: background-color .3s;
 }
+
 .lesson:hover {
-	background-color: #fbfbfb;
+    background-color: #fbfbfb;
 }
+
 .list-unstyled {
-	margin: 0;
+    margin: 0;
 }
+
 .form-control, .form-check-label {
-	font-size: 18px;
+    font-size: 18px;
 }
+
 .add-form-header {
-	text-align: center;
-	margin: 10px 0 30px;
+    text-align: center;
+    margin: 10px 0 30px;
 }
+
 .student-ico {
-	margin-left: 5px;
-	-webkit-transition: all .2s;
-	-moz-transition: all .2s;
-	-ms-transition: all .2s;
-	-o-transition: all .2s;
-	transition: all .2s;
+    margin-left: 5px;
+    -webkit-transition: all .2s;
+    -moz-transition: all .2s;
+    -ms-transition: all .2s;
+    -o-transition: all .2s;
+    transition: all .2s;
 }
+
 .student-ico:hover {
-	cursor: pointer;
-	font-size: 18px;
-	margin-left: 3px;
+    cursor: pointer;
+    font-size: 18px;
+    margin-left: 3px;
 }
+
 .red-ico:hover {
-	color: red;
+    color: red;
 }
+
 .blue-ico:hover {
-	color: blue;
+    color: blue;
 }
+
 .lesson {
-	position: relative;
+    position: relative;
 }
+
 .del-btn-box {
-	position: absolute;
-	display: inline-block;
-	top: .5em;
-	right: .5em;
+    position: absolute;
+    display: inline-block;
+    top: .5em;
+    right: .5em;
 }
+
 #confirm-btn {
-	padding: 0 2px;
-	font-size: 24px;
+    padding: 0 2px;
+    font-size: 24px;
 }
+
 .new-name-input {
-	padding: 4px 8px;
-	font-size: 15px;
+    padding: 4px 8px;
+    font-size: 15px;
+}
+
+.no-lessons {
+	margin-top: 15px;
+	padding: 30px 0;
+	text-align: center;
+	font-size: 32px;
+	color: #707579;
+}
+
+@media (min-width: 992px) {
+    .navbar-right {
+        justify-content: flex-end;
+    }
 }

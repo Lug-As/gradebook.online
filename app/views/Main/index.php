@@ -5,7 +5,7 @@
     <div class="row">
         <div class="col-md-12">
             <?php if (!$lessons): ?>
-            <div class="alert alert-secondary">
+            <div class="alert alert-secondary no-lessons">
                 <p>Пока что нет уроков</p>
             </div>
             <?php else: ?>

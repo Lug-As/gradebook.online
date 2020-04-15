@@ -17,11 +17,6 @@
                            placeholder="IronMan1965" required maxlength="100">
                 </div>
                 <div class="form-group">
-                    <label for="email-signup-input">Ваш email</label>
-                    <input id="email-signup-input" name="email" class="form-control signup-input" type="text"
-                           placeholder="ironman@ya.ru" required maxlength="100">
-                </div>
-                <div class="form-group">
                     <label for="password-signup-input">Ваш пароль</label>
                     <input id="password-signup-input" name="password" class="form-control signup-input" type="password" placeholder="••••••••" required maxlength="50">
                 </div>
