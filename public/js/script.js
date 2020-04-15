@@ -193,7 +193,8 @@ $("body").on('click', '.lesson-list .lesson .del-btn', function (e) {
     let svg = this.firstElementChild,
         lesson = svg.dataset.lesson,
         url = "/main/dellesson",
-        parentElement = this.parentElement.parentElement.parentElement.parentElement.parentElement;
+        lessonBlock = this.parentElement.parentElement.parentElement.parentElement.parentElement,
+        lessonBlockList = lessonBlock.parentElement;
     fetch(url, {
         method: "POST",
         headers: {
@@ -203,7 +204,10 @@ $("body").on('click', '.lesson-list .lesson .del-btn', function (e) {
     })
         .then(response => response.text())
         .then(result => {
-            parentElement.remove();
+            lessonBlock.remove();
+            if (lessonBlockList.children.length === 1){
+                document.querySelector(".no-lessons").hidden = false;
+            }
         });
 });
 let qty = document.getElementById('counting-btn');

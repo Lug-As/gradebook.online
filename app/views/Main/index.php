@@ -9,6 +9,9 @@
                 <p>Пока что нет уроков</p>
             </div>
             <?php else: ?>
+            <div class="alert alert-secondary no-lessons" hidden>
+                <p>Пока что нет уроков</p>
+            </div>
                 <?php foreach ($lessons as $lesson): ?>
                     <ul class="list-unstyled">
                         <li class="media">
