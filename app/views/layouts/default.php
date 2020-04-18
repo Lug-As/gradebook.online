@@ -63,7 +63,7 @@ if (!key_exists('user', $_SESSION) or empty($_SESSION['user'])) {
 <div class="main">
     <div class="container">
         <div class="main-content">
-            <?= $content . PHP_EOL; ?>
+            <?= $content ?>
         </div>
     </div>
 </div>

@@ -24,8 +24,8 @@
         <br>
         <div class="add-student">
             <h5>Добавить нового ученика</h5>
-            <input class="form-control" id="student-input" type="text" placeholder="Имя">
-            <input class="form-control" id="student-input-nick" type="text" placeholder="Ник">
+            <input id="student-input" name="name" class="form-control" type="text" placeholder="Имя">
+            <input id="student-input-nick" name="nick" class="form-control" type="text" placeholder="Ник">
             <button class="btn btn-primary" id="student-button">Добавить</button>
         </div>
         <br>

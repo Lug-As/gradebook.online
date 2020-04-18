@@ -1,3 +1,4 @@
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule (.*) index.php?$1 [L,QSA]
+Header add Content-Security-Policy "default-src 'self'; style-src 'self' https://stackpath.bootstrapcdn.com; script-src 'self' https://code.jquery.com https://cdn.jsdelivr.net https://stackpath.bootstrapcdn.com"

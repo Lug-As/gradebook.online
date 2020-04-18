@@ -18,7 +18,9 @@
 	<!--  table start  -->
 	<div class="row">
 		<div class="col-md-12">
-            <?= $table; ?>
+            <div class="table-wrap">
+                <?= $table; ?>
+            </div>
 		</div>
 	</div>
 	<!--  table end  -->
@@ -26,7 +28,7 @@
     <div class="row">
         <div class="col-md-10 offset-md-1">
             <div class="input-group mb-3">
-                <input type="text" class="form-control" placeholder="Добавить новую тему..." aria-label="Добавить новую тему..." aria-describedby="button-add" id="add-input">
+                <input id="add-input" class="form-control" name="theme" type="text" placeholder="Добавить новую тему..." aria-label="Добавить новую тему..." aria-describedby="button-add">
                 <div class="input-group-append">
                     <button class="btn btn-primary" id="button-add" disabled>Добавить</button>
                 </div>
@@ -51,10 +53,10 @@
 	<div class="row">
 		<div class="col-md-10 offset-md-1">
 			<div class="input-group mb-3">
-				<input type="text" class="form-control" placeholder="Имя нового ученика..." aria-label="Имя нового ученика..." aria-describedby="button-add2" id="name-input">
-				<input type="text" class="form-control" placeholder="Ник нового ученика..." aria-label="Ник нового ученика..." aria-describedby="button-add2" id="nick-input">
+				<input id="name-input" class="form-control" name="name" type="text" placeholder="Имя нового ученика...">
+				<input id="nick-input" class="form-control" name="nick" type="text" placeholder="Ник нового ученика...">
 				<div class="input-group-append">
-					<button class="btn btn-success" id="button-add2">Добавить</button>
+					<button class="btn btn-success" id="button-add2" disabled>Добавить</button>
 				</div>
 			</div>
 		</div>

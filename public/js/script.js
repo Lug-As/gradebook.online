@@ -1,5 +1,41 @@
+function ajaxRequest(url, body, onSuccessFunction = false, onErrorFunction = false) {
+    let xhr = new XMLHttpRequest();
+    xhr.open('POST', url, true);
+    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xhr.send(body);
+    xhr.onreadystatechange = function () {
+        if (this.readyState === 4) {
+            let result = this.responseText;
+            if (this.status === 200 && onSuccessFunction !== false) {
+                onSuccessFunction(result);
+            }
+            if (this.status === 500 && onErrorFunction !== false) {
+                onErrorFunction(result);
+            }
+        }
+    }
+}
+
+function serializeSelectorsArray(selectorsArray) {
+    let body;
+    body = "";
+    selectorsArray.forEach(function (selector) {
+        let element = document.querySelector(selector);
+        if (selector !== selectorsArray[0]) {
+            body += "&";
+        }
+        body += element.name + "=" + element.value.trim();
+        document.querySelector(selector).value = "";
+    });
+    return body;
+}
+
+function setMainTable(result) {
+    document.getElementById("main-table").outerHTML = result;
+}
+
 function insertTable(tableArray, tableTitle) {
-    let table;
+    let table, tablePosition, titlePosition;
     table = '<table class="table table-hover">' +
         '<thead class="thead-dark">' +
         '<tr><th scope="col">Ученик</th><th scope="col">Ник</th><th scope="col">Баллы</th></tr>' +
@@ -15,204 +51,165 @@ function insertTable(tableArray, tableTitle) {
         table += '</tr>';
     });
     table += '</tbody></table>';
-    let tablePosition, titlePosition;
-    tablePosition = document.querySelector('#counting-modal .modal-body .modal-table');
-    titlePosition = document.querySelector('#counting-modal .modal-header .modal-title');
+    tablePosition = document.querySelector('#counting-modal .modal-table');
+    titlePosition = document.querySelector('#counting-modal .modal-title');
     tablePosition.innerHTML = table;
     titlePosition.innerHTML = tableTitle;
 }
 
-$('body').on('click', '.plus-btn', function (e) {
-    let student = $(this).data('student'),
-        theme = $(this).data('theme'),
-        url = "/lesson/mark";
-    fetch(url, {
-        method: "POST",
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: "student=" + student + "&theme=" + theme
-    })
-        .then(response => response.text())
-        .then(result => {
-            if (result.trim() !== "") {
-                this.outerText = result;
-            }
-        });
-});
-let add_input = document.querySelector("#add-input");
-if (add_input) {
-    add_input.onkeyup = function (e) {
-        let empty = this.value.trim() === "";
-        document.querySelector("#button-add").disabled = empty;
+function disableByFilling(fillingIdsArray, disablingElementID) {
+    let intersection;
+    intersection = true;
+    fillingIdsArray.forEach(function (id) {
+        let isFilled = document.getElementById(id).value.trim() !== "";
+        intersection = intersection && isFilled;
+    });
+    document.getElementById(disablingElementID).disabled = !intersection;
+}
+
+if (document.getElementById("add-input")) {
+    document.getElementById("add-input").onkeyup = function (e) {
+        disableByFilling(["add-input"], "button-add");
     };
 }
-let button_add = document.querySelector("#button-add");
-if (button_add) {
-    button_add.onclick = function (e) {
+
+if (document.getElementById("name-input") && document.getElementById("nick-input")) {
+    document.getElementById("name-input").onkeyup = function () {
+        disableByFilling(["name-input", "nick-input"], "button-add2")
+    };
+    document.getElementById("nick-input").onkeyup = function () {
+        disableByFilling(["name-input", "nick-input"], "button-add2")
+    };
+}
+
+if (document.getElementById("button-add")) {
+    document.getElementById("button-add").onclick = function (e) {
         e.preventDefault();
-        let theme = document.querySelector("#add-input").value.trim(),
-            url = "/lesson/theme";
-        document.querySelector("#add-input").value = "";
+        let body = serializeSelectorsArray(["#add-input"]);
+        ajaxRequest("/lesson/theme", body, setMainTable);
         this.disabled = true;
-        fetch(url, {
-            method: "POST",
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            body: "theme=" + theme
-        })
-            .then(response => response.text())
-            .then(result => {
-                if (result.trim() !== "") {
-                    document.querySelector("#main-table").outerHTML = result;
-                }
-            });
-    };
+    }
 }
-let button_add2 = document.querySelector("#button-add2");
-if (button_add2) {
-    button_add2.onclick = function (e) {
+
+if (document.getElementById("button-add2")) {
+    document.getElementById("button-add2").onclick = function (e) {
         e.preventDefault();
-        let name = document.querySelector("#name-input").value.trim(),
-            nick = document.querySelector("#nick-input").value.trim(),
-            url = "/lesson/student";
-        document.querySelector("#name-input").value = "";
-        document.querySelector("#nick-input").value = "";
-        fetch(url, {
-            method: "POST",
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            body: "name=" + name + "&nick=" + nick,
-        })
-            .then(response => response.text())
-            .then(result => {
-                if (result.trim() !== "") {
-                    document.querySelector("#main-table").outerHTML = result;
-                }
-            });
+        let body = serializeSelectorsArray(["#name-input", "#nick-input"]);
+        ajaxRequest("/lesson/student", body, setMainTable);
     };
 }
+
 let radios = document.querySelectorAll(".group-radio-input");
 radios.forEach(function (element) {
     element.onclick = function () {
-        let id = "#" + this.dataset.show;
+        let id = this.dataset.show;
         document.querySelectorAll(".group-input").forEach(function (elem) {
             elem.disabled = true;
             elem.hidden = true;
         });
-        document.querySelector(id).disabled = false;
-        document.querySelector(id).hidden = false;
+        document.getElementById(id).disabled = false;
+        document.getElementById(id).hidden = false;
     }
 });
-let student_button = document.querySelector("#student-button");
-if (student_button) {
-    student_button.onclick = function (e) {
+
+// -----------------------------
+function pageReload() {
+    location.reload();
+}
+
+// -----------------------------
+
+if (document.querySelector("#student-button")) {
+    document.querySelector("#student-button").onclick = function (e) {
         e.preventDefault();
-        let name = document.querySelector("#student-input").value.trim(),
-            nick = document.querySelector("#student-input-nick").value.trim(),
-            url = "/add/new";
-        document.querySelector("#student-input").value = "";
-        document.querySelector("#student-input-nick").value = "";
-        fetch(url, {
-            method: "POST",
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            body: "name=" + name + "&nick=" + nick
-        })
-            .then(response => response.text())
-            .then(result => {
-                location.reload();
-            });
+        ajaxRequest("/add/new", ["#student-input", "#student-input-nick"], pageReload);
     };
 }
-$('body').on('click', '#main-table tbody tr .trash-ico', function (e) {
-    e.preventDefault();
-    let student, url;
-    student = this.dataset.student;
-    url = "/lesson/delstudent";
-    fetch(url, {
-        method: "POST",
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: "student=" + student,
-    })
-        .then(response => response.text())
-        .then(result => {
-            if (result.trim() !== "") {
-                document.querySelector("#main-table").outerHTML = result;
-            }
-        });
-});
-$('body').on('click', '#main-table tbody tr .edit-ico', function (e) {
-    e.preventDefault();
-    let student, type, text, input, parent, old_input;
-    student = this.dataset.student.trim();
-    type = this.dataset.tdType.trim();
-    text = this.parentElement.childNodes[0].textContent;
-    input = `<div class="input-group mb-3" id="new-name-block"><input type="text" value="${text}" class="form-control new-name-input" id="new-name-input" placeholder="Новое значение" aria-label="Новое значение" aria-describedby="confirm-btn"><div class="input-group-append"><button class="btn btn-outline-success" type="button" id="confirm-btn" data-student="${student}" data-td-type="${type}"><svg class="bi bi-check" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M13.854 3.646a.5.5 0 010 .708l-7 7a.5.5 0 01-.708 0l-3.5-3.5a.5.5 0 11.708-.708L6.5 10.293l6.646-6.647a.5.5 0 01.708 0z" clip-rule="evenodd"></svg></button></div></div>`;
-    old_input = document.querySelector('#new-name-block');
-    if (old_input) {
-        return false;
+
+document.querySelector('.main').onclick = function (e) {
+    if (!e.target.closest("#new-name-block")) {
+        if (document.querySelector('#new-name-block') && !e.target.closest(".edit-ico")) {
+            document.querySelector('#new-name-block').remove();
+        }
     }
-    parent = this.parentElement;
-    parent.insertAdjacentHTML('beforeend', input);
-    document.getElementById('new-name-input').focus();
-});
-$('body').on('blur', '#new-name-block', function (e) {
-    document.getElementById('new-name-block').remove();
-});
-$('body').on('mousedown', '#confirm-btn', function (e) {
-    e.preventDefault();
-    let new_value;
-    new_value = document.getElementById('new-name-input').value.trim();
-    if (new_value === "") return false;
-    let student, type, url;
-    student = this.dataset.student.trim();
-    type = this.dataset.tdType.trim();
-    url = "/lesson/editstudent";
-    fetch(url, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: `student=${student}&type=${type}&value=${new_value}`,
-    }).then(response => response.text())
-        .then(result => {
+};
+
+document.querySelector('.main-content').onclick = function (e) {
+    let target = e.target;
+    if (target.closest('.trash-ico')) {
+        let trash, student, body;
+        trash = target.closest('.trash-ico');
+        student = trash.dataset.student;
+        body = "student=" + student;
+        ajaxRequest("/lesson/delstudent", body, setMainTable);
+    }
+    if (target.closest('.plus-btn')) {
+        let plus, student, theme, body;
+        plus = target.closest('.plus-btn');
+        student = plus.dataset.student;
+        theme = plus.dataset.theme;
+        body = `student=${student}&theme=${theme}`;
+        ajaxRequest("/lesson/mark", body, function (result) {
+            plus.outerText = result;
+        });
+    }
+    if (target.closest('.edit-ico')) {
+        let edit, student, type, text, input, parent, old_input;
+        edit = target.closest('.edit-ico');
+        student = edit.dataset.student.trim();
+        type = edit.dataset.tdType.trim();
+        text = edit.parentElement.childNodes[0].textContent;
+        document.querySelectorAll("#new-name-block").forEach(function (element) {
+            element.remove();
+        });
+        input = `<div class="input-group mb-3" id="new-name-block"><input type="text" value="${text}" class="form-control new-name-input" id="new-name-input" placeholder="Новое значение"><div class="input-group-append"><button class="btn btn-outline-success" type="button" id="confirm-btn" data-student="${student}" data-td-type="${type}"><svg class="bi bi-check" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M13.854 3.646a.5.5 0 010 .708l-7 7a.5.5 0 01-.708 0l-3.5-3.5a.5.5 0 11.708-.708L6.5 10.293l6.646-6.647a.5.5 0 01.708 0z" clip-rule="evenodd"></svg></button></div></div>`;
+        old_input = document.querySelector('#new-name-block');
+        if (old_input) {
+            return false;
+        }
+        parent = edit.parentElement;
+        parent.insertAdjacentHTML('beforeend', input);
+        document.getElementById('new-name-input').focus();
+    }
+    if (target.closest('#confirm-btn')) {
+        let new_value, confirm_btn;
+        confirm_btn = target.closest('#confirm-btn');
+        new_value = document.getElementById('new-name-input').value.trim();
+        if (new_value === "") {
+            alert("Необходимо заполнить поле");
+        }
+        let student, type, body;
+        student = confirm_btn.dataset.student.trim();
+        type = confirm_btn.dataset.tdType.trim();
+        body = `student=${student}&type=${type}&value=${new_value}`;
+        ajaxRequest("/lesson/editstudent", body, function (result) {
             if (result.trim() !== "") {
-                this.parentElement.parentElement.parentElement.childNodes[0].textContent = result.trim();
-                document.querySelector('#new-name-input').blur();
+                confirm_btn.parentElement.parentElement.parentElement.childNodes[0].textContent = result.trim();
+                if (document.getElementById('new-name-block')) {
+                    document.getElementById('new-name-block').remove();
+                }
             }
         });
-});
-$("body").on('click', '.lesson-list .lesson .del-btn', function (e) {
-    e.preventDefault();
-    let svg = this.firstElementChild,
-        lesson = svg.dataset.lesson,
-        url = "/main/dellesson",
-        lessonBlock = this.parentElement.parentElement.parentElement.parentElement.parentElement,
+    }
+    if (target.closest('.lesson .del-btn')) {
+        let del_btn, svg, body, lesson, lessonBlock, lessonBlockList;
+        del_btn = target.closest('.lesson .del-btn');
+        svg = del_btn.firstElementChild;
+        lesson = svg.dataset.lesson;
+        lessonBlock = del_btn.parentElement.parentElement.parentElement.parentElement.parentElement;
         lessonBlockList = lessonBlock.parentElement;
-    fetch(url, {
-        method: "POST",
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: "lesson=" + lesson,
-    })
-        .then(response => response.text())
-        .then(result => {
+        body = `lesson=${lesson}`;
+        ajaxRequest("/main/dellesson", body, function () {
             lessonBlock.remove();
-            if (lessonBlockList.children.length === 1){
+            if (lessonBlockList.children.length === 1) {
                 document.querySelector(".no-lessons").hidden = false;
             }
         });
-});
-let qty = document.getElementById('counting-btn');
-if (qty) {
-    qty.onclick = function (e) {
+    }
+};
+
+if (document.getElementById('counting-btn')) {
+    document.getElementById('counting-btn').onclick = function (e) {
         e.preventDefault();
         let rows, marks;
         rows = document.querySelectorAll('#main-table tbody tr');
@@ -248,9 +245,9 @@ if (qty) {
         marks.sort(function (a, b) {
             a = a[2];
             b = b[2];
-            if (a < b){
+            if (a < b) {
                 return 1
-            } else if (a === b){
+            } else if (a === b) {
                 return 0
             } else {
                 return -1;
@@ -259,9 +256,9 @@ if (qty) {
         insertTable(marks, 'Баллы за урок');
     }
 }
-let task = document.getElementById('task-btn');
-if (task) {
-    task.onclick = function (e) {
+
+if (document.getElementById('task-btn')) {
+    document.getElementById('task-btn').onclick = function (e) {
         e.preventDefault();
         let rows, students;
         rows = document.querySelectorAll('#main-table tbody tr');
