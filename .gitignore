@@ -12,7 +12,7 @@ composer.phar
 # composer.lock
 
 ### PHPStorm ###
-.idea/z
+.idea/
 
 ### Windows ###
 # Windows thumbnail cache files
